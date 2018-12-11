@@ -77,6 +77,24 @@
             "ref": "258300d52be6ad59b32a888d5ddafbf9638540ff"
         }
     },
+    "illuminate/config": {
+        "version": "v5.7.15"
+    },
+    "illuminate/container": {
+        "version": "v5.7.15"
+    },
+    "illuminate/contracts": {
+        "version": "v5.7.15"
+    },
+    "illuminate/support": {
+        "version": "v5.7.15"
+    },
+    "incenteev/composer-parameter-handler": {
+        "version": "v2.1.3"
+    },
+    "jackiedo/dotenv-editor": {
+        "version": "1.0.8"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -116,6 +134,9 @@
             "ref": "f0436fc35fca88eada758311f8de43bfb61f1980"
         }
     },
+    "nesbot/carbon": {
+        "version": "1.36.1"
+    },
     "nikic/php-parser": {
         "version": "v4.1.0"
     },
@@ -154,6 +175,9 @@
             "version": "5.2",
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         }
+    },
+    "sroze/companienv": {
+        "version": "0.0.10"
     },
     "symfony/asset": {
         "version": "v4.2.1"
@@ -310,6 +334,15 @@
     },
     "symfony/templating": {
         "version": "v4.2.1"
+    },
+    "symfony/translation": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "1fb02a6e1c8f3d4232cce485c9afa868d63b115a"
+        }
     },
     "symfony/twig-bridge": {
         "version": "v4.2.1"
