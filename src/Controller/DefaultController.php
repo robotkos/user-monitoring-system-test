@@ -18,7 +18,7 @@ class DefaultController extends AbstractController
      *
      * This call takes into account all confirmed awards, but not pending or refused awards.
      *
-     * @Rest\Route("/api/user", methods={"GET"})
+     * @Rest\Route("/api/users/list", methods={"GET"})
      * @SWG\Response(
      *     response=200,
      *     description="Returns the rewards of an user",
@@ -29,7 +29,7 @@ class DefaultController extends AbstractController
      *     type="string",
      *     description="The field used to order rewards"
      * )
-     * @SWG\Tag(name="Admin API")
+     * @SWG\Tag(name="Users")
      * @Security(name="Bearer")
      */
 
