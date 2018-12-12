@@ -2,11 +2,20 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vue-material/1.0.0/vue-material.min.css">
+            <link rel="stylesheet" href="https://unpkg.com/vue-material@beta/dist/theme/default.css">
+        {% endblock %}
     </head>
     <body>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+            <script src="https://unpkg.com/vue"></script>
+            <script src="https://unpkg.com/vue-material@beta"></script>
+        {% endblock %}
     </body>
 </html>

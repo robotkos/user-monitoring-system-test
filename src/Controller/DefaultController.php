@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\Security;
-use Swagger\Annotations as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
-class UserController extends AbstractController
+class DefaultController extends AbstractController
 {
 
     /**
@@ -17,7 +18,7 @@ class UserController extends AbstractController
      *
      * This call takes into account all confirmed awards, but not pending or refused awards.
      *
-     * @Route("/api/user", methods={"GET"})
+     * @Rest\Route("/api/user", methods={"GET"})
      * @SWG\Response(
      *     response=200,
      *     description="Returns the rewards of an user",
@@ -28,13 +29,15 @@ class UserController extends AbstractController
      *     type="string",
      *     description="The field used to order rewards"
      * )
-     * @SWG\Tag(name="rewards")
+     * @SWG\Tag(name="Admin API")
      * @Security(name="Bearer")
      */
 
     public function index()
     {
-
-        return Response::create('text');
+        return $this->render('default/index.html.twig', [
+            'controller_name' => 'DefaultController',
+        ]);
+//        return Response::create('text');
     }
 }

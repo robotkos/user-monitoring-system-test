@@ -1,8 +1,3 @@
 # This file is auto-generated during the composer install
 parameters:
     secret: ThisTokenIsNotSoSecretChangeIt
-    jwt_private_key_path: '%kernel.root_dir%/../var/jwt/private.pem'
-    jwt_public_key_path: '%kernel.root_dir%/../var/jwt/public.pem'
-    jwt_key_pass_phrase: svetel
-    jwt_token_ttl: 31536000
-    url_shortener_api_key: AIzaSyD9eLQjv-33VoH1GEmVLwwdxD37u3JBQ3I
