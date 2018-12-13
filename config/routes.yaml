@@ -5,3 +5,15 @@ list.users:
     path: /api/users/list
     controller: App\Controller\UsersController::usersList
     methods: [GET]
+add.users:
+    path: /api/users/add
+    controller: App\Controller\UsersController::usersAdd
+    methods: [POST]
+edit.users:
+    path: /api/users/edit
+    controller: App\Controller\UsersController::usersEdit
+    methods: [POST]
+delete.users:
+    path: /api/users/delete/{id}
+    controller: App\Controller\UsersController::usersDelete
+    methods: [DELETE]

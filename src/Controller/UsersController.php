@@ -8,6 +8,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Swagger\Annotations as SWG;
 use Symfony\Component\Routing\Annotation\Route;
@@ -48,27 +49,143 @@ class UsersController extends AbstractController
      *
      * This call takes into account all confirmed awards, but not pending or refused awards.
      *
-     * @Rest\Route("/api/users/add", methods={"POST"})
      * @SWG\Response(
      *     response=200,
      *     description="Returns the rewards of an user",
      * )
      * @SWG\Parameter(
-     *     name="order",
+     *     name="name",
      *     in="query",
      *     type="string",
-     *     description="The field used to order rewards"
+     *     description="The name of User"
+     * )
+     * @SWG\Parameter(
+     *     name="email",
+     *     in="query",
+     *     type="string",
+     *     description="The email of User"
+     * )
+     * @SWG\Parameter(
+     *     name="company",
+     *     in="query",
+     *     type="string",
+     *     description="The company of User"
      * )
      * @SWG\Tag(name="Users")
      * @Security(name="Bearer")
      */
 
-    public function usersAdd()
+    public function usersAdd(Request $request)
     {
+        $name = $request->query->get('name');
+        $email = $request->query->get('email');
+        $companyId = $request->query->get('company');
 
-        $message = [
-            'test' => 'yes'
-        ];
-        return new JsonResponse([], 200);
+        if (!empty($name) && !empty($email) && !empty($companyId)){
+            $em = $this->em;
+            $user = new UsersVPS();
+            $user->setName($name);
+            $user->setEmail($email);
+            $user->setCompanyId($companyId);
+            $em->persist($user);
+            $em->flush();
+            return new JsonResponse(['message' => 'Saved'], 200);
+        }
+        return new JsonResponse(['message' => 'Something went wrong!'], 500);
+    }
+
+    /**
+     * List the rewards of the specified user.
+     *
+     * This call takes into account all confirmed awards, but not pending or refused awards.
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the rewards of an user",
+     * )
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="query",
+     *     type="string",
+     *     description="The id of User"
+     * )
+     * @SWG\Parameter(
+     *     name="name",
+     *     in="query",
+     *     type="string",
+     *     description="The name of User"
+     * )
+     * @SWG\Parameter(
+     *     name="email",
+     *     in="query",
+     *     type="string",
+     *     description="The email of User"
+     * )
+     * @SWG\Parameter(
+     *     name="company",
+     *     in="query",
+     *     type="string",
+     *     description="The company of User"
+     * )
+     * @SWG\Tag(name="Users")
+     * @Security(name="Bearer")
+     */
+
+    public function usersEdit(Request $request)
+    {
+        $id = $request->query->get('id');
+        $name = $request->query->get('name');
+        $email = $request->query->get('email');
+        $companyId = $request->query->get('company');
+
+        if (!empty($name) && !empty($email) && !empty($companyId) && !empty($id)){
+            $em = $this->em;
+            $emUser = $em->getRepository(UsersVPS::class);
+            $userData = $emUser->findOneBy(
+                [
+                    'id' => $id
+                ]
+            );
+            if (isset($userData)){
+                $userData->setName($name);
+                $userData->setEmail($email);
+                $userData->setCompanyId($companyId);
+                $em->persist($userData);
+                $em->flush();
+                return new JsonResponse(['message' => 'Saved'], 200);
+            }
+        }
+        return new JsonResponse(['message' => 'Something went wrong!'], 500);
+    }
+    /**
+     * List the rewards of the specified user.
+     *
+     * This call takes into account all confirmed awards, but not pending or refused awards.
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the rewards of an user",
+     * )
+     * @SWG\Tag(name="Users")
+     * @Security(name="Bearer")
+     */
+
+    public function usersDelete($id)
+    {
+        if (!empty($id)){
+            $em = $this->em;
+            $emUser = $em->getRepository(UsersVPS::class);
+            $userData = $emUser->findOneBy(
+                [
+                    'id' => $id
+                ]
+            );
+            if (isset($userData)){
+                $em->remove($userData);
+                $em->flush();
+                return new JsonResponse(['message' => 'Removed'], 200);
+            }
+        }
+        return new JsonResponse(['message' => 'Something went wrong!'], 500);
     }
 }
