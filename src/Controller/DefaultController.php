@@ -31,6 +31,55 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @return Response
+     * @throws \Exception
+     */
+    public function index()
+    {
+        $template = 'default/index.html.twig';
+        $userData = $this->getUser();
+        return $this->render($template, array(
+            'url' => $this->generateUrl('index'),
+            'user' => $userData->getUsername()
+        ));
+    }
+
+    /**
+     * @return Response
+     * @throws \Exception
+     */
+    public function users()
+    {
+        $template = 'default/users.html.twig';
+        $userData = $this->getUser();
+        return $this->render($template, array(
+            'url' => $this->generateUrl('users'),
+            'user' => $userData->getUsername()
+        ));
+    }
+
+    /**
+     * @return Response
+     * @throws \Exception
+     */
+    public function companies()
+    {
+        $template = 'default/companies.html.twig';
+        $userData = $this->getUser();
+        return $this->render($template, array(
+            'url' => $this->generateUrl('companies'),
+            'user' => $userData->getUsername()
+        ));
+    }
+
+    /**
+     * @Rest\Route("/logout", name="logout")
+     */
+    public function logout(){
+
+    }
+
+    /**
      * List the rewards of the specified user.
      *
      * This call takes into account all confirmed awards, but not pending or refused awards.

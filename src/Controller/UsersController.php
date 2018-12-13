@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\CompaniesVPN;
 use App\Entity\UsersVPS;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -38,9 +39,25 @@ class UsersController extends AbstractController
 
     public function usersList()
     {
+        $em = $this->em;
         $serializer = $this->get('serializer');
-        $em = $this->em->getRepository(UsersVPS::class)->findAll();
-        $json = $serializer->serialize($em, 'json');
+        $emUsers = $em->getRepository(UsersVPS::class)->findAll();
+        $emCompanies = $em->getRepository(CompaniesVPN::class);
+        $final = [];
+        foreach ($emUsers as $item) {
+            $company = $emCompanies->findOneBy([
+                'id' => $item->getCompanyId()
+            ]);
+
+            $final[] = [
+                'companyId' => $item->getCompanyId(),
+                'companyName' => $company->getName(),
+                'email' => $item->getEmail(),
+                'id' => $item->getId(),
+                'name' => $item->getName()
+            ];
+        }
+        $json = $serializer->serialize($final, 'json');
         return new JsonResponse($json, 200);
     }
 
@@ -77,12 +94,17 @@ class UsersController extends AbstractController
 
     public function usersAdd(Request $request)
     {
-        $name = $request->query->get('name');
-        $email = $request->query->get('email');
-        $companyId = $request->query->get('company');
-
-        if (!empty($name) && !empty($email) && !empty($companyId)){
-            $em = $this->em;
+        $em = $this->em;
+        $data = $request->getContent();
+        $decodedData = json_decode($data, true);
+        $name = $decodedData['name'];
+        $email = $decodedData['email'];
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['message' => 'Wrong Email format!'], 500);
+        }
+        $companyId = $decodedData['company'];
+//        $companyId = $this->getCompanyID($companyName, $em);
+        if (!empty($name) && !empty($email) && !empty($companyId)) {
             $user = new UsersVPS();
             $user->setName($name);
             $user->setEmail($email);
@@ -138,7 +160,7 @@ class UsersController extends AbstractController
         $email = $request->query->get('email');
         $companyId = $request->query->get('company');
 
-        if (!empty($name) && !empty($email) && !empty($companyId) && !empty($id)){
+        if (!empty($name) && !empty($email) && !empty($companyId) && !empty($id)) {
             $em = $this->em;
             $emUser = $em->getRepository(UsersVPS::class);
             $userData = $emUser->findOneBy(
@@ -146,7 +168,7 @@ class UsersController extends AbstractController
                     'id' => $id
                 ]
             );
-            if (isset($userData)){
+            if (isset($userData)) {
                 $userData->setName($name);
                 $userData->setEmail($email);
                 $userData->setCompanyId($companyId);
@@ -157,6 +179,7 @@ class UsersController extends AbstractController
         }
         return new JsonResponse(['message' => 'Something went wrong!'], 500);
     }
+
     /**
      * List the rewards of the specified user.
      *
@@ -172,7 +195,7 @@ class UsersController extends AbstractController
 
     public function usersDelete($id)
     {
-        if (!empty($id)){
+        if (!empty($id)) {
             $em = $this->em;
             $emUser = $em->getRepository(UsersVPS::class);
             $userData = $emUser->findOneBy(
@@ -180,12 +203,20 @@ class UsersController extends AbstractController
                     'id' => $id
                 ]
             );
-            if (isset($userData)){
+            if (isset($userData)) {
                 $em->remove($userData);
                 $em->flush();
                 return new JsonResponse(['message' => 'Removed'], 200);
             }
         }
         return new JsonResponse(['message' => 'Something went wrong!'], 500);
+    }
+
+    private function getCompanyID($name, EntityManagerInterface $em){
+        $emCompany = $em->getRepository(CompaniesVPN::class)
+            ->findOneBy([
+                'name' => $name
+            ]);
+        return $emCompany->getId();
     }
 }

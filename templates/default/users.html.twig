@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello {{ user }}!{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="page-container">
+            <md-app md-waterfall md-mode="fixed-last">
+                <md-app-toolbar class="md-large md-dense md-primary">
+                    <div class="md-toolbar-row">
+                        <div class="md-toolbar-section-start">
+                            <span class="md-title">VPS Admin</span>
+
+                        </div>
+
+                        <div class="md-toolbar-section-end">
+                            <md-button class="md-icon-button">
+                                <span class="md-title">{{ user }}</span>
+                            </md-button>
+                        </div>
+                    </div>
+
+                    <div class="md-toolbar-row">
+                        <div id="divLinks">
+                            <md-button><a href="{{ path('index') }}">Main</a></md-button>
+                            <md-button><a href="{{ path('users') }}">Users</a></md-button>
+                            <md-button><a href="{{ path('companies') }}">Companies</a></md-button>
+                            <md-button><a href="{{ path('logout') }}">Logout</a></md-button>
+                        </div>
+
+                    </div>
+                </md-app-toolbar>
+                <md-app-content>
+                </md-app-content>
+            </md-app>
+        </div>
+        <div id="UserPage">
+
+            {#<div class="col-md-4" v-for="item in contData">#}
+            {#<p>#}
+            {#${item.name}#}
+            {#</p>#}
+            {#</div>#}
+
+
+            <md-table md-card>
+                <md-table-toolbar>
+                    <h1 class="md-title">Users</h1>
+                    <md-dialog
+                            :md-active.sync="showDialog"
+                    >
+                        <md-dialog-title>Adding new User</md-dialog-title>
+
+                        <p>
+                            <md-field>
+                                <label>User</label>
+                                <md-input id="text_MainGallery_1" type="text"
+                                          v-model="user" class="validate">
+                                </md-input>
+                            </md-field>
+                            <md-field>
+                                <label>Email</label>
+                                <md-input id="text_MainGallery_2" type="email"
+                                          v-model="email" class="validate">
+                                </md-input>
+                            </md-field>
+                            <md-field>
+                                <label for="company">Company</label>
+                                <md-select v-model="company" name="company" id="company">
+                                    <md-option v-for="(company, indexCompany) in companiesData" v-bind:value="company.id">${company.name}</md-option>
+                                </md-select>
+                            </md-field>
+                        </p>
+                        <md-dialog-actions>
+                            <md-button class="md-primary" @click="showDialog = false">Закрыть</md-button>
+                            <md-button class="md-primary" @click="addNewUser">Сохранить</md-button>
+                        </md-dialog-actions>
+                    </md-dialog>
+
+                    <md-button class="md-primary md-raised" @click="showDialog = true">New User
+                    </md-button>
+                </md-table-toolbar>
+
+                <md-table-row>
+                    <md-table-head>Name</md-table-head>
+                    <md-table-head>Email</md-table-head>
+                    <md-table-head>Company</md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                </md-table-row>
+
+                <md-table-row v-for="(item, index) in contData" :key="index" v-bind:value="item.id">
+                    <md-table-cell>${item.name}</md-table-cell>
+                    <md-table-cell>${item.email}</md-table-cell>
+                    <md-table-cell>${item.companyName}</md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell>
+                        <md-button class="md-primary" v-bind:value="item.id">
+                            Edit
+                        </md-button>
+                    </md-table-cell>
+                    <md-table-cell>
+                        <md-button class="md-accent" v-bind:value="item.id" @click="onDelete">
+                            Delete
+                        </md-button>
+                    </md-table-cell>
+                </md-table-row>
+
+                <md-table-toolbar>
+                    <h1 class="md-title">Edit User</h1>
+                    <md-dialog
+                            :md-active.sync="showEdirDialog"
+                    >
+                        <md-dialog-title>Adding new User</md-dialog-title>
+
+                        <p>
+                            <md-field>
+                                <label>User</label>
+                                <md-input id="text_MainGallery_1" type="text"
+                                          v-model="user" class="validate">
+                                </md-input>
+                            </md-field>
+                            <md-field>
+                                <label>Email</label>
+                                <md-input id="text_MainGallery_2" type="email"
+                                          v-model="email" class="validate">
+                                </md-input>
+                            </md-field>
+                            <md-field>
+                                <label for="company">Company</label>
+                                <md-select v-model="company" name="company" id="company">
+                                    <md-option v-for="(company, indexCompany) in companiesData" v-bind:value="company.id">${company.name}</md-option>
+                                </md-select>
+                            </md-field>
+                        </p>
+                        <md-dialog-actions>
+                            <md-button class="md-primary" @click="showDialog = false">Закрыть</md-button>
+                            <md-button class="md-primary" @click="addNewUser">Сохранить</md-button>
+                        </md-dialog-actions>
+                    {#</md-dialog>#}
+
+                    {#<md-button class="md-primary md-raised" @click="showEdirDialog = true">New User#}
+                    {#</md-button>#}
+                </md-table-toolbar>
+
+            </md-table>
+        </div>
+    </div>
+{% endblock %}
