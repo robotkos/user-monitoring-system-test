@@ -35,3 +35,13 @@ delete.companies:
     path: /api/companies/delete/{id}
     controller: App\Controller\CompaniesController::companiesDelete
     methods: [DELETE]
+
+generate.data:
+    path: /api/generate
+    controller: App\Controller\DefaultController::generateData
+    methods: [GET]
+
+list.data:
+    path: /api/list_report
+    controller: App\Controller\DefaultController::reportList
+    methods: [POST]

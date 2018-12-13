@@ -24,7 +24,7 @@ class UsersVPSFixtures extends Fixture
         $companyIDs = $this->getRandomCompanyID();
 
         $fake = new Factory();
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $users = new UsersVPS();
             $users->setName($fake->create()->name);
             $users->setEmail($fake->create()->email);

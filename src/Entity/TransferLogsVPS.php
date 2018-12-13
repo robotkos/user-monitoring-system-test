@@ -33,7 +33,7 @@ class TransferLogsVPS
     private $resource;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=255)
      */
     private $transfered;
 
@@ -78,12 +78,12 @@ class TransferLogsVPS
         return $this;
     }
 
-    public function getTransfered(): ?int
+    public function getTransfered(): ?string
     {
         return $this->transfered;
     }
 
-    public function setTransfered(int $transfered): self
+    public function setTransfered(string $transfered): self
     {
         $this->transfered = $transfered;
 

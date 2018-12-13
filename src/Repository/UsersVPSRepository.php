@@ -19,6 +19,16 @@ class UsersVPSRepository extends ServiceEntityRepository
         parent::__construct($registry, UsersVPS::class);
     }
 
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+
+    public function findOneColumn()
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u.id')
+            ;
+    }
     // /**
     //  * @return UsersVPS[] Returns an array of UsersVPS objects
     //  */
