@@ -1,6 +1,7 @@
 index:
     path: /main
     controller: App\Controller\DefaultController::index
+
 list.users:
     path: /api/users/list
     controller: App\Controller\UsersController::usersList
@@ -16,4 +17,21 @@ edit.users:
 delete.users:
     path: /api/users/delete/{id}
     controller: App\Controller\UsersController::usersDelete
+    methods: [DELETE]
+
+list.companies:
+    path: /api/companies/list
+    controller: App\Controller\CompaniesController::companiesList
+    methods: [GET]
+add.companies:
+    path: /api/companies/add
+    controller: App\Controller\CompaniesController::companiesAdd
+    methods: [POST]
+edit.companies:
+    path: /api/companies/edit
+    controller: App\Controller\CompaniesController::companiesEdit
+    methods: [POST]
+delete.companies:
+    path: /api/companies/delete/{id}
+    controller: App\Controller\CompaniesController::companiesDelete
     methods: [DELETE]
