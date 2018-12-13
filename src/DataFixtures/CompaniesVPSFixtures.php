@@ -15,7 +15,7 @@ class CompaniesVPSFixtures extends Fixture
         for ($i=0; $i < 10; $i++) {
             $company = new CompaniesVPN();
             $company->setName($fake->create()->company);
-            $company->setQuota(rand(1,30));
+            $company->setQuota(rand(1,500));
             $manager->persist($company);
         }
         $manager->flush();

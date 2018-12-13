@@ -21,6 +21,11 @@ class TransferLogsVPS
      * @ORM\ManyToOne(targetEntity="App\Entity\UsersVPS")
      */
     private $user_id;
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\ManyToOne(targetEntity="App\Entity\CompaniesVPN")
+     */
+    private $company_id;
 
     /**
      * @ORM\Column(type="datetime")
@@ -89,4 +94,22 @@ class TransferLogsVPS
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getCompanyId()
+    {
+        return $this->company_id;
+    }
+
+    /**
+     * @param mixed $company_id
+     */
+    public function setCompanyId($company_id): void
+    {
+        $this->company_id = $company_id;
+    }
+
+
 }

@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\TransferLogsVPS;
 use App\Entity\UsersVPS;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -27,7 +29,35 @@ class UsersVPSRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('u')
             ->select('u.id')
+            ->addSelect('u.companyId')
             ;
+    }
+
+    /**
+     * @param EntityManagerInterface $em
+     * @return bool
+     * @throws \Doctrine\DBAL\ConnectionException
+     * @throws \Doctrine\DBAL\DBALException
+     */
+
+    public function clearTable(EntityManagerInterface $em):bool
+    {
+        $classMetaData = $em->getClassMetadata(TransferLogsVPS::class);
+        $connection = $em->getConnection();
+        $dbPlatform = $connection->getDatabasePlatform();
+        $connection->beginTransaction();
+        try {
+            $connection->query('SET FOREIGN_KEY_CHECKS=0');
+            $q = $dbPlatform->getTruncateTableSql($classMetaData->getTableName());
+            $connection->executeUpdate($q);
+            $connection->query('SET FOREIGN_KEY_CHECKS=1');
+            $connection->commit();
+            return true;
+        }
+        catch (\Exception $e) {
+            $connection->rollback();
+        }
+        return false;
     }
     // /**
     //  * @return UsersVPS[] Returns an array of UsersVPS objects

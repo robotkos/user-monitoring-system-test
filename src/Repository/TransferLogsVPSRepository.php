@@ -19,6 +19,23 @@ class TransferLogsVPSRepository extends ServiceEntityRepository
         parent::__construct($registry, TransferLogsVPS::class);
     }
 
+    public function getByDate(string $monthss)
+    {
+        $datetimeStart = new \DateTime('01 ' . $monthss);
+        $datetimeEnd = new \DateTime('31 ' . $monthss);
+        $from = new \DateTime($datetimeStart->format("M d")." 00:00:00");
+        $to   = new \DateTime($datetimeEnd->format("M d")." 00:00:00");
+
+        $qb = $this->createQueryBuilder("e");
+        $qb
+            ->andWhere('e.date_time BETWEEN :from AND :to')
+            ->setParameter('from', $from )
+            ->setParameter('to', $to)
+        ;
+
+        return $qb;
+    }
+
     // /**
     //  * @return TransferLogsVPS[] Returns an array of TransferLogsVPS objects
     //  */

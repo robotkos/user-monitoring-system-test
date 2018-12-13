@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\CompaniesVPN;
 use App\Entity\TransferLogsVPS;
 use App\Entity\UsersVPS;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Faker\Factory;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\Security;
+use function PHPSTORM_META\elementType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,17 +47,20 @@ class DefaultController extends AbstractController
     {
         $em = $this->em;
         $faker = new Factory();
-        $userIDs = $em->getRepository(UsersVPS::class)->findOneColumn()->getQuery()->getResult();
-        $last6Mouth = $this->getLast6Mouth();
-        foreach ($last6Mouth as $month) {
+        $vpsRepository = $em->getRepository(UsersVPS::class);
+        $vpsRepository->clearTable($em);
+        $userIDs = $vpsRepository->findOneColumn()->getQuery()->getResult();
+        $last6Months = $this->getLast6Months();
+        foreach ($last6Months as $months) {
             foreach ($userIDs as $userID) {
                 for ($i = 0; $i <= rand(9, 80); $i++) {
-                    $randomSize = $this->FileSizeConvert(rand(100, 10995116277760));
+                    $randomSize = $this->FileSizeConvert(rand(100, 1099511627776));
                     $transferLogs = new TransferLogsVPS();
                     $transferLogs->setUserId($userID['id']);
-                    $transferLogs->setResource($faker->create()->address);
+                    $transferLogs->setCompanyId($userID['companyId']);
+                    $transferLogs->setResource($faker->create()->domainName);
                     $transferLogs->setTransfered($randomSize['bytes']);
-                    $transferLogs->setDateTime(new \DateTime($month['time'][array_rand($month['time'])]));
+                    $transferLogs->setDateTime(new \DateTime($months['time'][array_rand($months['time'])]));
                     $em->persist($transferLogs);
                 };
             }
@@ -73,7 +79,7 @@ class DefaultController extends AbstractController
      *     description="Returns the rewards of an user",
      * )
      * @SWG\Parameter(
-     *     name="mounth",
+     *     name="months",
      *     in="query",
      *     type="string",
      *     description="The Mounth for Report"
@@ -84,11 +90,62 @@ class DefaultController extends AbstractController
 
     public function reportList(Request $request)
     {
+        $em = $this->em;
+        $months = $request->query->get('months');
+        $transfersByMonths = $this->getTransfersByMonths($months, $em);
+        $checkQuota = $this->compareQuota($transfersByMonths, $em);
 
-        return new JsonResponse(['data' => 'yes'], 200);
+        $serializer = $this->get('serializer');
+        $json = $serializer->serialize($checkQuota, 'json');
+        return new JsonResponse($json, 200);
     }
 
-    private function getLast6Mouth(): array
+    private function compareQuota($transfersByMonths, EntityManagerInterface $em): array
+    {
+        $emCompanies = $em->getRepository(CompaniesVPN::class);
+        $result = [];
+        foreach ($transfersByMonths as $key => $companyTransfered) {
+            $companyQuota = $emCompanies->findOneBy(
+                [
+                    'id' => $key
+                ]
+            );
+            $cQuota = $companyQuota->getQuota() * 1099511627776;
+            if ($cQuota < $companyTransfered) {
+                $result[] = [
+                    'company' => $companyQuota->getName(),
+                    'used' => $companyTransfered,
+                    'quota' => $cQuota,
+                ];
+            }
+        }
+        return $result;
+    }
+
+    private function getTransfersByMonths($months, EntityManagerInterface $em)
+    {
+        $monthss = $this->getLast6Months()[0]['month'];
+
+        $result = $em->getRepository(TransferLogsVPS::class)->getByDate($monthss);
+
+        return $this->getCompaniesTranferData($result);
+    }
+
+    private function getCompaniesTranferData(QueryBuilder $qb): array
+    {
+        $result = $qb->getQuery()->getResult();
+        $final = [];
+        foreach ($result as $tranferedEntity) {
+            if (isset($final[$tranferedEntity->getCompanyId()])) {
+                $final[$tranferedEntity->getCompanyId()] += $tranferedEntity->getTransfered();
+            } else {
+                $final[$tranferedEntity->getCompanyId()] = $tranferedEntity->getTransfered();
+            }
+        }
+        return $final;
+    }
+
+    private function getLast6Months(): array
     {
         $months = [];
         for ($i = 1; $i < 6; $i++) {
