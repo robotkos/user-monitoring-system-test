@@ -155,10 +155,15 @@ class UsersController extends AbstractController
 
     public function usersEdit(Request $request)
     {
-        $id = $request->query->get('id');
-        $name = $request->query->get('name');
-        $email = $request->query->get('email');
-        $companyId = $request->query->get('company');
+        $data = $request->getContent();
+        $decodedData = json_decode($data, true);
+        $id = $decodedData['id'];
+        $name = $decodedData['name'];
+        $email = $decodedData['email'];
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return new JsonResponse(['message' => 'Wrong Email format!'], 500);
+        }
+        $companyId = $decodedData['company'];
 
         if (!empty($name) && !empty($email) && !empty($companyId) && !empty($id)) {
             $em = $this->em;

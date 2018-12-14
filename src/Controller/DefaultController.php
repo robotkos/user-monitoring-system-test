@@ -100,9 +100,10 @@ class DefaultController extends AbstractController
         $vpsRepository->clearTable($em);
         $userIDs = $vpsRepository->findOneColumn()->getQuery()->getResult();
         $last6Months = $this->getLast6Months();
-        foreach ($last6Months as $months) {
+        $randMonths = $this->getRandMonths($last6Months);
+        foreach ($randMonths as $months) {
             foreach ($userIDs as $userID) {
-                for ($i = 0; $i <= rand(9, 80); $i++) {
+                for ($i = 0; $i <= rand(30, 80); $i++) {
                     $randomSize = $this->FileSizeConvert(rand(100, 1099511627776));
                     $transferLogs = new TransferLogsVPS();
                     $transferLogs->setUserId($userID['id']);
@@ -127,6 +128,24 @@ class DefaultController extends AbstractController
      *     response=200,
      *     description="Returns the rewards of an user",
      * )
+     * @SWG\Tag(name="Data Workers")
+     * @Security(name="Bearer")
+     */
+
+    public function getLastMonths()
+    {
+        return new JsonResponse($this->getLast6Months(), 200);
+    }
+
+    /**
+     * List the rewards of the specified user.
+     *
+     * This call takes into account all confirmed awards, but not pending or refused awards.
+     *
+     * @SWG\Response(
+     *     response=200,
+     *     description="Returns the rewards of an user",
+     * )
      * @SWG\Parameter(
      *     name="months",
      *     in="query",
@@ -139,8 +158,12 @@ class DefaultController extends AbstractController
 
     public function reportList(Request $request)
     {
+        $data = $request->getContent();
+        $decodedData = json_decode($data, true);
+        $months = $decodedData['months'];
+
         $em = $this->em;
-        $months = $request->query->get('months');
+//        $months = $request->query->get('months');
         $transfersByMonths = $this->getTransfersByMonths($months, $em);
         $checkQuota = $this->compareQuota($transfersByMonths, $em);
 
@@ -163,8 +186,8 @@ class DefaultController extends AbstractController
             if ($cQuota < $companyTransfered) {
                 $result[] = [
                     'company' => $companyQuota->getName(),
-                    'used' => $companyTransfered,
-                    'quota' => $cQuota,
+                    'used' => $this->FileSizeConvert($companyTransfered)['view'],
+                    'quota' => $this->FileSizeConvert($cQuota)['view'],
                 ];
             }
         }
@@ -173,9 +196,9 @@ class DefaultController extends AbstractController
 
     private function getTransfersByMonths($months, EntityManagerInterface $em)
     {
-        $monthss = $this->getLast6Months()[0]['month'];
+//        $monthss = $this->getLast6Months()[0]['month'];
 
-        $result = $em->getRepository(TransferLogsVPS::class)->getByDate($monthss);
+        $result = $em->getRepository(TransferLogsVPS::class)->getByDate($months);
 
         return $this->getCompaniesTranferData($result);
     }
@@ -248,5 +271,14 @@ class DefaultController extends AbstractController
             'bytes' => $bytes,
             'view' => $result
         ];
+    }
+    
+    private function getRandMonths(array $months):array {
+        $mon = [];
+        shuffle($months);
+        foreach ($months as $month) {
+            $mon[] = $month;
+        }
+        return $mon;
     }
 }

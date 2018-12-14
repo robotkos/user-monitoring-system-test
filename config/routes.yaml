@@ -51,3 +51,8 @@ list.data:
     path: /api/list_report
     controller: App\Controller\DefaultController::reportList
     methods: [POST]
+
+last.months:
+    path: /api/last_months
+    controller: App\Controller\DefaultController::getLastMonths
+    methods: [GET]

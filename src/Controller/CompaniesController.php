@@ -72,17 +72,21 @@ class CompaniesController extends AbstractController
 
     public function companiesAdd(Request $request)
     {
-        $name = $request->query->get('name');
-        $quota = $request->query->get('quota');
+        $data = $request->getContent();
+        $decodedData = json_decode($data, true);
+        $name = $decodedData['name'];
+        $quota = $decodedData['quota'];
 
-        if (!empty($name) && !empty($quota)){
-            $em = $this->em;
-            $user = new CompaniesVPN();
-            $user->setName($name);
-            $user->setQuota($quota);
-            $em->persist($user);
-            $em->flush();
-            return new JsonResponse(['message' => 'Saved'], 200);
+        if (!empty($name) && !empty($quota)) {
+            if ($quota > 0 && $quota < 1000) {
+                $em = $this->em;
+                $user = new CompaniesVPN();
+                $user->setName($name);
+                $user->setQuota($quota);
+                $em->persist($user);
+                $em->flush();
+                return new JsonResponse(['message' => 'Saved'], 200);
+            }
         }
         return new JsonResponse(['message' => 'Something went wrong!'], 500);
     }
@@ -120,28 +124,33 @@ class CompaniesController extends AbstractController
 
     public function companiesEdit(Request $request)
     {
-        $id = $request->query->get('id');
-        $name = $request->query->get('name');
-        $quota = $request->query->get('quota');
+        $data = $request->getContent();
+        $decodedData = json_decode($data, true);
+        $id = $decodedData['id'];
+        $name = $decodedData['name'];
+        $quota = $decodedData['quota'];
 
-        if (!empty($name) && !empty($quota) && !empty($id)){
-            $em = $this->em;
-            $emUser = $em->getRepository(CompaniesVPN::class);
-            $userData = $emUser->findOneBy(
-                [
-                    'id' => $id
-                ]
-            );
-            if (isset($userData)){
-                $userData->setName($name);
-                $userData->setQuota($quota);
-                $em->persist($userData);
-                $em->flush();
-                return new JsonResponse(['message' => 'Saved'], 200);
+        if (!empty($name) && !empty($quota) && !empty($id)) {
+            if ($quota > 0 && $quota < 1000) {
+                $em = $this->em;
+                $emUser = $em->getRepository(CompaniesVPN::class);
+                $userData = $emUser->findOneBy(
+                    [
+                        'id' => $id
+                    ]
+                );
+                if (isset($userData)) {
+                    $userData->setName($name);
+                    $userData->setQuota($quota);
+                    $em->persist($userData);
+                    $em->flush();
+                    return new JsonResponse(['message' => 'Saved'], 200);
+                }
             }
         }
         return new JsonResponse(['message' => 'Something went wrong!'], 500);
     }
+
     /**
      * List the rewards of the specified user.
      *
@@ -157,7 +166,7 @@ class CompaniesController extends AbstractController
 
     public function companiesDelete($id)
     {
-        if (!empty($id)){
+        if (!empty($id)) {
             $em = $this->em;
             $emUser = $em->getRepository(CompaniesVPN::class);
             $userData = $emUser->findOneBy(
@@ -165,7 +174,7 @@ class CompaniesController extends AbstractController
                     'id' => $id
                 ]
             );
-            if (isset($userData)){
+            if (isset($userData)) {
                 $em->remove($userData);
                 $em->flush();
                 return new JsonResponse(['message' => 'Removed'], 200);

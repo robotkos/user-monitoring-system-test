@@ -3,84 +3,132 @@
 {% block title %}Hello {{ user }}!{% endblock %}
 
 {% block body %}
-    <div class="page-container">
-        <md-app md-waterfall md-mode="fixed-last">
-            <md-app-toolbar class="md-large md-dense md-primary">
-                <div class="md-toolbar-row">
-                    <div class="md-toolbar-section-start">
-                        <span class="md-title">VPS Admin</span>
-                        <span class="md-title">{{ user }}</span>
+
+    <div class="container">
+        <div class="page-container">
+            <md-app md-waterfall md-mode="fixed-last">
+                <md-app-toolbar class="md-large md-dense md-primary">
+                    <div class="md-toolbar-row">
+                        <div class="md-toolbar-section-start">
+                            <span class="md-title">VPS Admin</span>
+
+                        </div>
+
+                        <div class="md-toolbar-section-end">
+                            <md-button class="md-icon-button">
+                                <span class="md-title">{{ user }}</span>
+                            </md-button>
+                        </div>
                     </div>
 
-                    <div class="md-toolbar-section-end">
-                        <md-button class="md-icon-button">
-                            <md-icon>more_vert</md-icon>
-                        </md-button>
-                    </div>
-                </div>
-
+                </md-app-toolbar>
+                <md-app-content>
+                </md-app-content>
+            </md-app>
+        </div>
+        <div id="CompaniesPage">
                 <div class="md-toolbar-row">
                     <div id="divLinks">
-                        <md-button><a href="{{ path('index') }}">Main</a></md-button>
-                        <md-button><a href="{{ path('users') }}">Users</a></md-button>
-                        <md-button><a href="{{ path('companies') }}">Companies</a></md-button>
-                        <md-button><a href="{{ path('logout') }}">Logout</a></md-button>
+                        <md-button class="md-accent"><a href="{{ path('index') }}">Main</a></md-button>
+                        <md-button class="md-accent"><a href="{{ path('users') }}">Users</a></md-button>
+                        <md-button class="md-accent"><a href="{{ path('companies') }}">Companies</a></md-button>
+                        <md-button class="md-accent"><a href="{{ path('logout') }}">Logout</a></md-button>
                     </div>
 
                 </div>
-            </md-app-toolbar>
-            <md-app-content>
-            </md-app-content>
-        </md-app>
-    </div>
-<div class="container">
+            <md-table md-card>
+                <md-table-toolbar>
+                    <h1 class="md-title">Companies</h1>
+                    <md-dialog
+                            :md-active.sync="showDialog"
+                    >
+                        <md-dialog-title>Adding new Company</md-dialog-title>
 
-    <h1>Hello {{ user }}! ✅</h1>
-    <div id="mainContacts">
-        <div class="col-md-4" v-for="item in contData">
-            <p>
-                ${item.name}
-            </p>
+                        <p>
+                            <md-field>
+                                <label>Name</label>
+                                <md-input type="text"
+                                          v-model="name" class="validate">
+                                </md-input>
+                            </md-field>
+                            <md-field>
+                                <label>Quota</label>
+                                <md-input type="number" min="1" max="999"
+                                          v-model="quota" class="validate">
+                                </md-input>
+                            </md-field>
+                        </p>
+                        <md-dialog-actions>
+                            <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+                            <md-button class="md-primary" @click="addNewCompany(); showDialog = false">Save</md-button>
+                        </md-dialog-actions>
+                    </md-dialog>
+
+                    <md-button class="md-primary md-raised" @click="showDialog = true">New Company
+                    </md-button>
+                </md-table-toolbar>
+
+                <md-table-row>
+                    <md-table-head>Name</md-table-head>
+                    <md-table-head>Quota</md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                    <md-table-head></md-table-head>
+                </md-table-row>
+
+                <md-table-row v-for="(item, index) in contData" :key="index" v-bind:value="item.id">
+                    <md-table-cell>${item.name}</md-table-cell>
+                    <md-table-cell>${item.quota}</md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell></md-table-cell>
+                    <md-table-cell>
+                        <md-button class="md-primary" v-bind:value="item.id" @click="companyID = item.id; showEdirDialog = true;">
+                            Edit
+                        </md-button>
+                    </md-table-cell>
+                    <md-table-cell>
+                        <md-button class="md-accent" v-bind:value="item.id" @click="onDelete">
+                            Delete
+                        </md-button>
+                    </md-table-cell>
+                </md-table-row>
+
+                <h1 class="md-title"></h1>
+                <md-dialog
+                        :md-active.sync="showEdirDialog"
+                >
+                    <md-dialog-title>Edit Company</md-dialog-title>
+
+                    <p>
+                        <md-field>
+                            <label>Name</label>
+                            <md-input type="text"
+                                      v-model="name" class="validate">
+                            </md-input>
+                        </md-field>
+                        <md-field>
+                            <label>Quota</label>
+                            <md-input type="number" min="1" max="999"
+                                      v-model="quota" class="validate">
+                            </md-input>
+                        </md-field>
+                    </p>
+                    <md-dialog-actions>
+                        <md-button class="md-primary" @click="showEdirDialog = false">Close</md-button>
+                        <md-button class="md-primary" @click="EditCompany(); showEdirDialog = false">Save</md-button>
+                    </md-dialog-actions>
+                </md-dialog>
+
+            </md-table>
         </div>
-
-
-        <md-table md-card>
-            <md-table-toolbar>
-                <h1 class="md-title">Users</h1>
-            </md-table-toolbar>
-
-            <md-table-row>
-                <md-table-head md-numeric>ID</md-table-head>
-                <md-table-head>Name</md-table-head>
-                <md-table-head>Email</md-table-head>
-                <md-table-head>Gender</md-table-head>
-                <md-table-head>Job Title</md-table-head>
-            </md-table-row>
-
-            <md-table-row>
-                <md-table-cell md-numeric>1</md-table-cell>
-                <md-table-cell>Shawna Dubbin</md-table-cell>
-                <md-table-cell>sdubbin0@geocities.com</md-table-cell>
-                <md-table-cell>Male</md-table-cell>
-                <md-table-cell>Assistant Media Planner</md-table-cell>
-            </md-table-row>
-
-            <md-table-row>
-                <md-table-cell md-numeric>2</md-table-cell>
-                <md-table-cell>Odette Demageard</md-table-cell>
-                <md-table-cell>odemageard1@spotify.com</md-table-cell>
-                <md-table-cell>Female</md-table-cell>
-                <md-table-cell>Account Coordinator</md-table-cell>
-            </md-table-row>
-
-            <md-table-row>
-                <md-table-cell md-numeric>3</md-table-cell>
-                <md-table-cell>Vera Taleworth</md-table-cell>
-                <md-table-cell>vtaleworth2@google.ca</md-table-cell>
-                <md-table-cell>Male</md-table-cell>
-                <md-table-cell>Community Outreach Specialist</md-table-cell>
-            </md-table-row>
-        </md-table>
     </div>
-</div>
 {% endblock %}
