@@ -96,9 +96,6 @@
         "symfony-web-dir": "public",
         "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
-        "incenteev-parameters": {
-            "file": "config/parameters.yml"
-        },
         "companienv-parameters": [
             {
                 "file": ".env",
