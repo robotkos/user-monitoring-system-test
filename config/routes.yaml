@@ -56,10 +56,3 @@ last.months:
     path: /api/last_months
     controller: App\Controller\DefaultController::getLastMonths
     methods: [GET]
-
-homepage:
-    path: /
-    controller: App\Controller\DefaultController::index
-    defaults:
-        path: /main
-        permanent: true
