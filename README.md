@@ -1,4 +1,4 @@
-#VPS monitoring 
+#VPN monitoring 
 
 ==========
 
