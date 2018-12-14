@@ -74,8 +74,13 @@ class CompaniesController extends AbstractController
     {
         $data = $request->getContent();
         $decodedData = json_decode($data, true);
-        $name = $decodedData['name'];
-        $quota = $decodedData['quota'];
+        if (empty($decodedData)){
+            $name = $request->query->get('name');
+            $quota = $request->query->get('quota');
+        } else{
+            $name = $decodedData['name'];
+            $quota = $decodedData['quota'];
+        }
 
         if (!empty($name) && !empty($quota)) {
             if ($quota > 0 && $quota < 1000) {
@@ -126,9 +131,15 @@ class CompaniesController extends AbstractController
     {
         $data = $request->getContent();
         $decodedData = json_decode($data, true);
-        $id = $decodedData['id'];
-        $name = $decodedData['name'];
-        $quota = $decodedData['quota'];
+        if (empty($decodedData)){
+            $id = $request->query->get('id');
+            $name = $request->query->get('name');
+            $quota = $request->query->get('quota');
+        } else{
+            $id = $decodedData['id'];
+            $name = $decodedData['name'];
+            $quota = $decodedData['quota'];
+        }
 
         if (!empty($name) && !empty($quota) && !empty($id)) {
             if ($quota > 0 && $quota < 1000) {

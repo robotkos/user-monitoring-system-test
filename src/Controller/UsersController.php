@@ -97,12 +97,19 @@ class UsersController extends AbstractController
         $em = $this->em;
         $data = $request->getContent();
         $decodedData = json_decode($data, true);
-        $name = $decodedData['name'];
-        $email = $decodedData['email'];
+        if (empty($decodedData)){
+            $name = $request->query->get('name');
+            $email = $request->query->get('email');
+            $companyId = $request->query->get('company');
+        } else{
+            $name = $decodedData['name'];
+            $email = $decodedData['email'];
+            $companyId = $decodedData['company'];
+
+        }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return new JsonResponse(['message' => 'Wrong Email format!'], 500);
         }
-        $companyId = $decodedData['company'];
 //        $companyId = $this->getCompanyID($companyName, $em);
         if (!empty($name) && !empty($email) && !empty($companyId)) {
             $user = new UsersVPS();
@@ -157,13 +164,20 @@ class UsersController extends AbstractController
     {
         $data = $request->getContent();
         $decodedData = json_decode($data, true);
-        $id = $decodedData['id'];
-        $name = $decodedData['name'];
-        $email = $decodedData['email'];
+        if (empty($decodedData)){
+            $id = $request->query->get('id');
+            $name = $request->query->get('name');
+            $email = $request->query->get('email');
+            $companyId = $request->query->get('company');
+        } else{
+            $id = $decodedData['id'];
+            $name = $decodedData['name'];
+            $email = $decodedData['email'];
+            $companyId = $decodedData['company'];
+        }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return new JsonResponse(['message' => 'Wrong Email format!'], 500);
         }
-        $companyId = $decodedData['company'];
 
         if (!empty($name) && !empty($email) && !empty($companyId) && !empty($id)) {
             $em = $this->em;
